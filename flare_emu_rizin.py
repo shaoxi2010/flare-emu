@@ -271,7 +271,7 @@ class RizinAnalysisHelper(flare_emu.AnalysisHelper):
     )
 
   def getCString(self, addr):
-    buf = ''
+    buf = b''
     while (
         address >= self.getMinimumAddr()
         and address < self.getMaximumAddr()

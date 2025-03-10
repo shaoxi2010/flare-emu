@@ -40,7 +40,7 @@ class IdaProAnalysisHelper(flare_emu.AnalysisHelper):
         return ret
 
     def getFuncEnd(self, addr):
-        ret =  idc.get_func_attr(addr, idc.FUNCATTR_END)
+        ret = idc.get_func_attr(addr, idc.FUNCATTR_END)
         if ret == idc.BADADDR:
             return None
         return ret
@@ -75,11 +75,13 @@ class IdaProAnalysisHelper(flare_emu.AnalysisHelper):
         return idc.get_bytes(addr, size, False)
 
     def getCString(self, addr):
-        buf = ""
-        while self.getBytes(addr, 1) != "\x00" and self.getBytes(addr, 1) is not None:
-            buf += self.getBytes(addr, 1)
+        buf = b""
+        while True:
+            byte = self.getBytes(addr, 1)
+            if byte == b"\x00" and byte is not None:
+                break
             addr += 1
-
+            buf += byte
         return buf
 
     def getOperand(self, addr, opndNum):
@@ -190,8 +192,11 @@ class IdaProAnalysisHelper(flare_emu.AnalysisHelper):
         return idc.get_item_size(addr)
 
     def isTerminatingBB(self, bb):
-        if (bb.type == idaapi.fcb_ret or bb.type == idaapi.fcb_noret or
-                (bb.type == idaapi.fcb_indjump and len(list(bb.succs())) == 0)):
+        if (
+            bb.type == idaapi.fcb_ret
+            or bb.type == idaapi.fcb_noret
+            or (bb.type == idaapi.fcb_indjump and len(list(bb.succs())) == 0)
+        ):
             return True
         for b in bb.succs():
             if b.type == idaapi.fcb_extern:

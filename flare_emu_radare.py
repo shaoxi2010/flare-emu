@@ -264,7 +264,7 @@ class Radare2AnalysisHelper(flare_emu.AnalysisHelper):
         return binascii.unhexlify(self.r.cmd("p8 %d @%d" % (size, addr)).replace("\n", ""))
 
     def getCString(self, addr):
-        buf = ""
+        buf = b""
         while (address >= self.getMinimumAddr() 
                and address < self.getMaximumAddr() 
                and self.getBytes(address, 1) != "\x00"):
